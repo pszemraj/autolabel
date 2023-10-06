@@ -71,7 +71,11 @@ class HFPipelineLLM(BaseModel):
             )
 
         if not torch.cuda.is_available():
-            model = AutoModel.from_pretrained(self.model_name)
+            model = AutoModel.from_pretrained(
+                self.model_name,
+                device_map="cpu",
+                torch_dtype=torch.bfloat16 if quantize_bits == 16 else torch.float32,
+            )
         elif quantize_bits == 4:
             model = AutoModel.from_pretrained(
                 self.model_name, load_in_4bit=True, device_map="auto"
