@@ -72,6 +72,10 @@ class HFPipelineLLM(BaseModel):
 
         if not torch.cuda.is_available():
             model = AutoModel.from_pretrained(self.model_name)
+        elif quantize_bits == 4:
+            model = AutoModel.from_pretrained(
+                self.model_name, load_in_4bit=True, device_map="auto"
+            )
         elif quantize_bits == 8:
             model = AutoModel.from_pretrained(
                 self.model_name, load_in_8bit=True, device_map="auto"
