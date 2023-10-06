@@ -96,6 +96,13 @@ class HFPipelineLLM(BaseModel):
             **model_kwargs,
         )
 
+        try:
+            pipe.model = torch.compile(pipe.model, mode="reduce-overhead")
+        except AttributeError:
+            logger.warning(
+                "Could not compile the model. Please upgrade to the latest version of torch/transformers."
+            )
+
         # initialize LLM
         self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=model_kwargs)
 
